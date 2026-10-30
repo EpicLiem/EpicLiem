@@ -26,7 +26,7 @@ export async function renderQuote(quote, destination, day, scale = 2) {
   paths.push(font.getPath('Leonardo da Vinci', padding, height - padding - 70, 36).toSVG());
   const datePath = font.getPath(date, padding, padding, 32).toSVG();
   const votePath = font.getPath('Click to vote for tomorrow’s quote', padding, height - padding, 36).toSVG();
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#171c1e"/><g fill="#aab5ae">${datePath}</g><g fill="#ede2ce">${paths.join('')}</g><g fill="#d79a76">${votePath}</g></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" rx="32" fill="#171c1e"/><g fill="#aab5ae">${datePath}</g><g fill="#ede2ce">${paths.join('')}</g><g fill="#d79a76">${votePath}</g></svg>`;
   await sharp(Buffer.from(svg), {density:72 * scale}).png().toFile(destination);
   return {width:Math.round(width * scale),height:Math.round(height * scale),lines:lines.length};
 }

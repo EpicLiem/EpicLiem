@@ -24,6 +24,11 @@ test('all 54 quotes render as smaller, pixel-identical lossless WebP images', as
       assert.equal(webpMetadata.format,'webp');
       assert.equal(webpMetadata.width,metadata.width);
       assert.equal(webpMetadata.height,metadata.height);
+      const pixels = await sharp(webp).ensureAlpha().raw().toBuffer();
+      for (const [x,y] of [[0,0],[metadata.width-1,0],[0,metadata.height-1],[metadata.width-1,metadata.height-1]]) {
+        assert.equal(pixels[(y * metadata.width + x) * 4 + 3],0,`${quote.id}: transparent corner`);
+      }
+      assert.equal(pixels[Math.floor(metadata.width/2) * 4 + 3],255,`${quote.id}: opaque top edge`);
       assert.deepEqual(await sharp(webp).ensureAlpha().raw().toBuffer(), await sharp(png).ensureAlpha().raw().toBuffer(), quote.id);
       assert.ok(webp.length < png.length,quote.id);
       pngBytes += png.length;
