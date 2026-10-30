@@ -14,8 +14,9 @@ test('all 54 quotes render as smaller, pixel-identical lossless WebP images', as
       const destination = path.join(directory,quote.id+'.png');
       const result = await renderQuote(quote,destination,'2026-10-29');
       const metadata = await sharp(destination).metadata();
-      assert.equal(metadata.width,1600);
-      assert.ok(result.height <= 1000,quote.id);
+      assert.equal(metadata.width,3200);
+      assert.equal(metadata.height,result.height);
+      assert.ok(result.height <= 2000,quote.id);
       assert.equal(wrap(quote.text,56,1400).join(' '),quote.text);
       const png = await readFile(destination);
       const webp = await encodeReadmeImage(png);
