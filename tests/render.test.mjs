@@ -6,13 +6,13 @@ import path from 'node:path';
 import sharp from 'sharp';
 import { renderQuote, wrap, encodeReadmeImage, quoteArtwork } from '../scripts/render-quote.mjs';
 const quotes = JSON.parse(await readFile(new URL('../data/quotes.json',import.meta.url)));
-test('all 54 crisp SVG quotes render with transparent corners and lossless raster exports', async () => {
+test('all 54 precise SVG quotes render with transparent corners and lossless raster exports', async () => {
   const directory = await mkdtemp(path.join(os.tmpdir(),'leonardo-'));
   let pngBytes = 0, webpBytes = 0;
   try {
     for (const quote of quotes) {
       const {svg} = quoteArtwork(quote,'2026-10-29');
-      assert.match(svg,/shape-rendering="crispEdges"/);
+      assert.match(svg,/shape-rendering="geometricPrecision"/);
       assert.doesNotMatch(svg,/<(?:script|text|image|foreignObject)\b|https?:\/\/(?!www\.w3\.org\/2000\/svg)/);
       const vectorMetadata = await sharp(Buffer.from(svg)).metadata();
       assert.equal(vectorMetadata.width,1600);

@@ -42,7 +42,7 @@ export function quoteArtwork(quote, day) {
   paths.push(outline('Leonardo da Vinci',padding,height - padding - 70,36));
   const datePath = outline(date,padding,padding,32);
   const votePath = outline('Click to vote for tomorrow’s quote',padding,height - padding,36);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><defs>${definitions.join('')}</defs><rect width="100%" height="100%" rx="32" fill="#171c1e"/><g shape-rendering="crispEdges"><g fill="#aab5ae">${datePath}</g><g fill="#ede2ce">${paths.join('')}</g><g fill="#d79a76">${votePath}</g></g></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><defs>${definitions.join('')}</defs><rect width="100%" height="100%" rx="32" fill="#171c1e"/><g shape-rendering="geometricPrecision"><g fill="#aab5ae">${datePath}</g><g fill="#ede2ce">${paths.join('')}</g><g fill="#d79a76">${votePath}</g></g></svg>`;
   return {svg,width,height,lines:lines.length};
 }
 export async function renderQuote(quote, destination, day, scale = 2) {
