@@ -11,7 +11,7 @@ test('all curated quotes render as readable PNGs', async () => {
   try {
     for (const quote of quotes) {
       const destination = path.join(directory,quote.id+'.png');
-      const result = await renderQuote(quote,destination);
+      const result = await renderQuote(quote,destination,'2026-10-29');
       const metadata = await sharp(destination).metadata();
       assert.equal(metadata.width,1600);
       assert.ok(result.height <= 1000,quote.id);
