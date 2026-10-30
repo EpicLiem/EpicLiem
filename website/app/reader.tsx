@@ -10,9 +10,9 @@ async function read<T>(url: string): Promise<T> {
   if (!response.ok) throw new Error(body.error || 'Could not load this page.');
   return body;
 }
-export default function Reader() {
-  const [edition,setEdition] = useState<Edition|null>(null);
-  const [ballot,setBallot] = useState<Ballot|null>(null);
+export default function Reader({initialEdition = null, initialBallot = null}: {initialEdition?:Edition|null;initialBallot?:Ballot|null}) {
+  const [edition,setEdition] = useState<Edition|null>(initialEdition);
+  const [ballot,setBallot] = useState<Ballot|null>(initialBallot);
   const [error,setError] = useState('');
   const [busy,setBusy] = useState(false);
   const [loading,setLoading] = useState(true);
@@ -25,7 +25,18 @@ export default function Reader() {
     } catch (e) { setError(e instanceof Error ? e.message : 'Could not load the passages.'); }
     finally { setLoading(false); }
   }, []);
-  useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(() => {
+    if (!initialEdition || !initialBallot || Date.now() >= initialBallot.closesAt) {
+      void refresh();
+      return;
+    }
+    // The public HTML has the passages; only the browser's private vote needs loading.
+    let active = true;
+    read<Ballot>('/api/ballot').then(value => { if (active) setBallot(value); })
+      .catch(e => { if (active) setError(e instanceof Error ? e.message : 'Voting is unavailable.'); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [refresh,initialEdition,initialBallot]);
   useEffect(() => {
     if (!ballot) return;
     const timer = setTimeout(() => { setMessage('A new day has begun. Loading the next ballot.'); void refresh(); }, Math.max(0,ballot.closesAt-Date.now()) + 1000);
@@ -48,6 +59,7 @@ export default function Reader() {
   return <div className="page">
     <header><a className="title" href="/">Leonardo, tomorrow</a><a href="https://github.com/EpicLiem">GitHub profile</a></header>
     <main>
+      <noscript><p>You can read the passages here. Enable JavaScript to vote.</p></noscript>
       {loading && !edition && <p className="loading" role="status">Opening the notebooks…</p>}
       {error && <div className="error" role="alert"><p>{error}</p><button onClick={() => void refresh()} disabled={loading}>{loading ? 'Loading…' : 'Reload passages'}</button></div>}
       {edition && <section className="today" aria-label="Today’s passage">

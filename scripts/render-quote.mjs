@@ -1,6 +1,9 @@
 import opentype from 'opentype.js';
 import sharp from 'sharp';
 const font = opentype.loadSync(new URL('../assets/terminess-regular.ttf', import.meta.url).pathname);
+export async function encodeReadmeImage(png) {
+  return sharp(png).webp({lossless:true, effort:6}).toBuffer();
+}
 export function wrap(text, size, maxWidth) {
   const lines = [];
   let line = '';

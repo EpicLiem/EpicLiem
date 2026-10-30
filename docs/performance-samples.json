@@ -1,0 +1,54 @@
+{
+  "before": {
+    "conditions": "390x844; 150ms RTT, 1.6Mbps down, 4x CPU slowdown; new context and disabled cache each run",
+    "samples": [
+      {
+        "lcpMs": 1928,
+        "cls": 0.821101853979597,
+        "blockingMs": 130,
+        "quoteVisibleMs": 1937.5999999642372,
+        "transferBytes": 1502148
+      },
+      {
+        "lcpMs": 1896,
+        "cls": 0.821101853979597,
+        "blockingMs": 57,
+        "quoteVisibleMs": 1899.199999988079,
+        "transferBytes": 1499712
+      },
+      {
+        "lcpMs": 1820,
+        "cls": 0.821101853979597,
+        "blockingMs": 53,
+        "quoteVisibleMs": 1823.800000011921,
+        "transferBytes": 1499712
+      }
+    ]
+  },
+  "after": {
+    "conditions": "390x844; 150ms RTT, 1.6Mbps down, 4x CPU slowdown; new context and disabled cache each run",
+    "samples": [
+      {
+        "lcpMs": 652,
+        "cls": 0,
+        "blockingMs": 57,
+        "quoteVisibleMs": 653.5,
+        "transferBytes": 154359
+      },
+      {
+        "lcpMs": 620,
+        "cls": 0.03055926071188532,
+        "blockingMs": 58,
+        "quoteVisibleMs": 585.1999999880791,
+        "transferBytes": 151872
+      },
+      {
+        "lcpMs": 564,
+        "cls": 0.03055926071188532,
+        "blockingMs": 59,
+        "quoteVisibleMs": 534.2000000476837,
+        "transferBytes": 151872
+      }
+    ]
+  }
+}

@@ -31,10 +31,13 @@ export async function today() {
   if (!quote) throw new Error('Published passage missing.');
   return {day, timeZone:'America/New_York', quote};
 }
-export async function ballot(voter: string) {
+export async function ballot(voter?: string) {
   const day = nextDay(dayAt());
-  const [counts, votes] = await Promise.all([countsFor(day), db()`SELECT quote_id FROM leonardo_votes WHERE day = ${day} AND voter = ${voter}`]);
-  return {day, closesAt:midnight(day) * 1000, choices:candidates(day, quotes), counts, selected:votes[0]?.quote_id ?? null};
+  const rows = await db()`SELECT quote_id, COUNT(*)::int AS total,
+    bool_or(voter = ${voter ?? ''}) AS selected
+    FROM leonardo_votes WHERE day = ${day} GROUP BY quote_id`;
+  const counts = Object.fromEntries(rows.map(row => [row.quote_id, Number(row.total)]));
+  return {day, closesAt:midnight(day) * 1000, choices:candidates(day, quotes), counts, selected:rows.find(row => row.selected)?.quote_id ?? null};
 }
 export async function castVote(day: string, voter: string, quoteId: string, network: string) {
   if (day !== nextDay(dayAt()) || !candidates(day, quotes).some(q => q.id === quoteId)) return 'closed';

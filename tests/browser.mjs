@@ -20,6 +20,7 @@ await page.getByRole('button',{name:/Vote for passage 2:/}).click();
 await page.waitForFunction(()=>document.querySelectorAll('button[aria-pressed="true"]').length===1 && document.querySelector('button[aria-label^="Vote for passage 2"]')?.getAttribute('aria-pressed')==='true');
 await page.reload();
 await page.getByRole('button',{name:/Vote for passage 2:/}).waitFor();
+await page.waitForFunction(()=>document.querySelector('button[aria-label^="Vote for passage 2"]')?.getAttribute('aria-pressed')==='true');
 assert.equal(await page.getByRole('button',{name:/Vote for passage 2:/}).getAttribute('aria-pressed'),'true');
 await page.screenshot({path:'outputs/qa/desktop.png',fullPage:true});
 await page.setViewportSize({width:390,height:844});

@@ -4,7 +4,7 @@ The GitHub profile README contains only the quote image, linked to https://profi
 
 ## Local work
 
-- Root: `npm ci && npm test` validates all 54 PNG renders.
+- Root: `npm ci && npm test` validates all 54 image renders and pixel-identical lossless WebP encoding.
 - Website: `npm ci --prefix website`, then copy `website/.env.example` to `website/.env.local` and supply DATABASE_URL and a random VOTER_SECRET (at least 32 characters).
 - `cd website && npm run db:migrate` creates only the two named Leonardo tables and their index, idempotently.
 - `npm run dev --prefix website` serves port 3127.
@@ -22,7 +22,7 @@ Voting uses a signed, HttpOnly, SameSite=Lax browser cookie. A vote can be repla
 
 ## Automation
 
-`.github/workflows/daily-quote.yml` checks hourly at minute 7. It fetches the current winner, validates the day and quote against the source-controlled collection, converts the exact Terminess font to SVG paths and renders a PNG, then commits README.md, quote.png and current-quote.json only when changed. Scheduled runs may be delayed by GitHub; they are not an exact-midnight guarantee. Workflow failures preserve the previous image and are visible in Actions. Public-repo schedules may be disabled after 60 days of repository inactivity; daily successful quote commits keep this repository active.
+`.github/workflows/daily-quote.yml` checks hourly at minute 7. It fetches the current winner, validates the day and quote against the source-controlled collection, converts the exact Terminess font to SVG paths and renders a PNG export plus lossless WebP for the README, then commits README.md, quote.png, images/ and current-quote.json only when changed. Content-hashed image filenames bypass stale GitHub image caches; old published images remain available for cached READMEs. Scheduled runs may be delayed by GitHub; they are not an exact-midnight guarantee. Workflow failures preserve the previous image and are visible in Actions. Public-repo schedules may be disabled after 60 days of repository inactivity; daily successful quote commits keep this repository active.
 
 Run manually with `gh workflow run daily-quote.yml -R EpicLiem/EpicLiem`. The default branch must allow the GitHub Actions token to push. Website-only changes deploy through Vercel's Git integration; image-only commits skip website builds using `ignoreCommand`.
 
