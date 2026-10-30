@@ -1,0 +1,30 @@
+name: Daily Leonardo quote
+on:
+  schedule:
+    # 00:07 in New York in daylight/standard time; hourly retries cover delays.
+    - cron: '7 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: daily-leonardo-quote
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run render
+      - name: Publish today's image
+        run: |
+          git add README.md quote.png current-quote.json
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Update daily Leonardo passage'
+          git push

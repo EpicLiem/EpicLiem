@@ -1,0 +1,4 @@
+outputs
+node_modules
+.git
+site-identity.json

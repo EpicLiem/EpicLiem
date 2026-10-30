@@ -1,0 +1,49 @@
+import { chromium } from '@playwright/test';
+import assert from 'node:assert/strict';
+import { mkdir, writeFile } from 'node:fs/promises';
+const browser = await chromium.launch({executablePath:process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true,args:process.env.TEST_RESOLVE ? [`--host-resolver-rules=MAP profile.epicliem.com ${process.env.TEST_RESOLVE}`] : []});
+try {
+const context = await browser.newContext({viewport:{width:1440,height:1100}});
+const page = await context.newPage();
+const errors=[];page.on('pageerror',error=>errors.push(error.message));
+await mkdir('outputs/qa',{recursive:true});
+const origin=process.env.TEST_ORIGIN || 'http://localhost:3127';
+await page.goto(origin);
+await page.getByRole('heading',{name:'Choose tomorrow’s passage'}).waitFor();
+await page.evaluate(()=>document.fonts.ready);
+assert.equal(await page.locator('blockquote').count(),1);
+assert.equal(await page.getByRole('button',{name:/Vote for passage/}).count(),3);
+await page.getByRole('button',{name:/Vote for passage 1:/}).click();
+await page.getByText('Your vote is saved. You can change it until midnight.',{exact:true}).waitFor();
+assert.equal(await page.getByRole('button',{name:/Vote for passage 1:/}).getAttribute('aria-pressed'),'true');
+await page.getByRole('button',{name:/Vote for passage 2:/}).click();
+await page.waitForFunction(()=>document.querySelectorAll('button[aria-pressed="true"]').length===1 && document.querySelector('button[aria-label^="Vote for passage 2"]')?.getAttribute('aria-pressed')==='true');
+await page.reload();
+await page.getByRole('button',{name:/Vote for passage 2:/}).waitFor();
+assert.equal(await page.getByRole('button',{name:/Vote for passage 2:/}).getAttribute('aria-pressed'),'true');
+await page.screenshot({path:'outputs/qa/desktop.png',fullPage:true});
+await page.setViewportSize({width:390,height:844});
+assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+await page.getByText('Sources & voting',{exact:true}).click();
+assert.ok(await page.locator('details').evaluate(el=>el.open));
+await page.screenshot({path:'outputs/qa/mobile.png',fullPage:true});
+await page.getByText('Sources & voting',{exact:true}).click();
+const cookies=await context.cookies();
+const voter=cookies.find(c=>c.name==='leonardo-voter')?.value.split('.')[0];
+const ballot=await page.evaluate(async()=> (await fetch('/api/ballot')).json());
+await writeFile('outputs/qa/test-voter.json',JSON.stringify({voter,day:ballot.day}));
+const invalid=await page.evaluate(async day=>(await fetch('/api/vote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({day,quoteId:'not-a-quote'})})).status,ballot.day);
+assert.equal(invalid,409);
+if (!process.env.TEST_RESOLVE) {
+  const foreign=await context.request.post(origin+'/api/vote',{headers:{Origin:'https://example.org'},data:{day:ballot.day,quoteId:ballot.choices[0].id}});
+  assert.equal(foreign.status(),403);
+}
+await page.route('**/api/ballot',route=>route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Voting is unavailable. Please try again shortly.'})}));
+await page.reload();
+await page.locator('.error[role="alert"]').waitFor();
+await page.unroute('**/api/ballot');
+await page.getByRole('button',{name:'Reload passages'}).click();
+await page.getByRole('heading',{name:'Choose tomorrow’s passage'}).waitFor();
+assert.equal(errors.length,0,errors.join('\n'));
+console.log('PASS: desktop/mobile, save/change/persist vote, sources disclosure, invalid choice, error/retry, no overflow or page errors.');
+} finally { await browser.close(); }
