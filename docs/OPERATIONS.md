@@ -31,3 +31,7 @@ Run manually with `gh workflow run daily-quote.yml -R EpicLiem/EpicLiem`. The de
 `data/quotes.json` is the profile validator's collection; `website/lib/quotes.json` must stay identical. See `data/SOURCES.md` for primary-source anchors and translation details. The quoted text is historical, not a claim of modern scientific accuracy. Font license lives in `assets/terminess-LICENSE.txt` and website/public/fonts.
 
 To add passages, update both collections and test rotation; the corpus length must be a multiple of three to retain the stated 18-day group behavior (cycle length changes with collection size). Existing persisted editions refer to stable IDs: don't remove published IDs.
+
+## Crisp README artwork
+
+The README now links to a content-addressed SVG. Lettering uses embedded, reusable glyph outlines from the same font with `shape-rendering="crispEdges"`; rounded background corners retain normal antialiasing and transparency. There are no external fonts, images, scripts or foreign objects. This avoids browser downsampling of a large raster image and does not depend on custom README CSS, which GitHub strips. The browser still decides how to apply the crisp-edge rendering hint. A 2× PNG export remains at quote.png; existing WebP/PNG assets remain available for cached older READMEs. The earlier WebP performance measurements describe that previous version, not the SVG's transfer size.
