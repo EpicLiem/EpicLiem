@@ -57,7 +57,7 @@ export default function Reader({initialEdition = null, initialBallot = null}: {i
     finally { setBusy(false); }
   }
   return <div className="page">
-    <header><a className="title" href="/">Leonardo, tomorrow</a><a href="https://github.com/EpicLiem">GitHub profile</a></header>
+    <header><a className="title" href="/">Leonardo, tomorrow</a><nav aria-label="Personal links"><a href="https://github.com/EpicLiem"><span aria-hidden="true">← </span>Back to GitHub</a><a href="https://epicliem.com">epicliem.com</a></nav></header>
     <main>
       <noscript><p>You can read the passages here. Enable JavaScript to vote.</p></noscript>
       {loading && !edition && <p className="loading" role="status">Opening the notebooks…</p>}
