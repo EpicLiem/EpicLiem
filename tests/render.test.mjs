@@ -6,7 +6,7 @@ import path from 'node:path';
 import sharp from 'sharp';
 import { renderQuote, wrap, encodeReadmeImage, quoteArtwork } from '../scripts/render-quote.mjs';
 const quotes = JSON.parse(await readFile(new URL('../data/quotes.json',import.meta.url)));
-test('all 54 precise SVG quotes render with transparent corners and lossless raster exports', async () => {
+test('all precise SVG quotes render with transparent corners and lossless raster exports', async () => {
   const directory = await mkdtemp(path.join(os.tmpdir(),'leonardo-'));
   let pngBytes = 0, webpBytes = 0;
   try {
@@ -39,6 +39,6 @@ test('all 54 precise SVG quotes render with transparent corners and lossless ras
       pngBytes += png.length;
       webpBytes += webp.length;
     }
-    console.log(`54 images: PNG ${pngBytes} bytes; lossless WebP ${webpBytes} bytes (${(100 * (1-webpBytes/pngBytes)).toFixed(1)}% smaller).`);
+    console.log(`${quotes.length} images: PNG ${pngBytes} bytes; lossless WebP ${webpBytes} bytes (${(100 * (1-webpBytes/pngBytes)).toFixed(1)}% smaller).`);
   } finally { await rm(directory,{recursive:true,force:true}); }
 });

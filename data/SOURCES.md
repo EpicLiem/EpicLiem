@@ -1,27 +1,45 @@
 # Leonardo quote sources
 
-All 54 entries in `quotes.json` are direct quotations or contiguous excerpts from **The Notebooks of Leonardo Da Vinci — Complete**, edited by Jean Paul Richter, first published in 1883; Project Gutenberg ebook 5000. This public-domain edition uses older English spelling and punctuation. Text is preserved as transcribed by Gutenberg, with line wrapping collapsed into spaces. No AI-written quotations or modern paraphrases are included.
+The catalog contains **72 active passages** and **34 retired prophecies**, all direct quotations or contiguous excerpts from **The Notebooks of Leonardo Da Vinci — Complete**, translated and edited by Jean Paul Richter; Project Gutenberg ebook 5000. This public-domain English edition uses older spelling and punctuation. Text is preserved as transcribed by Gutenberg, with line wrapping collapsed into spaces. No AI-written quotations or modern paraphrases are included.
 
 - [Gutenberg catalog and bibliographic record](https://www.gutenberg.org/ebooks/5000)
 - [Complete HTML edition](https://www.gutenberg.org/cache/epub/5000/pg5000-images.html)
 - [Plain-text edition](https://www.gutenberg.org/cache/epub/5000/pg5000.txt)
-- Retrieved 2026-10-29.
-- Retrieved plain-text file SHA-256: `83e79e107270ea7cbbc4b478913978738ae3d763081e54bc173a663d08ca5b10`.
+- Reverified 2026-11-08.
+- Plain-text file SHA-256: `83e79e107270ea7cbbc4b478913978738ae3d763081e54bc173a663d08ca5b10`.
+- HTML file SHA-256: `f19465a8877ef6c7c24b3377abed4d89704e8f10d83be17bd2610d5ac9aab03f`.
 
-Each entry records its numbered section and a direct link to the specific HTML paragraph containing it. IDs are stable descriptive slugs. `topic` supplies context, particularly for the **Prophecies**, which are literary riddles about everyday things, not literal forecasts. For example, the "dead things" that bind the living are snares and traps; bodies without souls are books; the men who pass through their own bowels refer to the renewal of bodily substance. Keep these contextual labels available to readers alongside the source links.
+Each entry records its numbered section and a direct link to the specific HTML paragraph containing it. IDs are stable descriptive slugs; topics provide context. `data/quotes.json` and `website/lib/quotes.json` must stay identical.
+
+## Selection and retirement
+
+On 2026-11-08, **52 new passages** were added to the 20 existing non-prophecy passages. The active collection favors mortality, bodily processes, perception, light and shadow, unsettling natural imagery, and idiosyncratic human observations. It excludes the **Prophecies**, which are literary riddles about everyday things. "Uncommon" is an editorial judgment, not a measured popularity ranking.
+
+All 34 original prophecy entries are marked `retired: true`. They remain in the catalog with their original IDs and wording so saved editions, votes and published images retain their provenance. They cannot enter a new ballot. If a saved daily edition refers to a retired passage, the website displays the first active candidate for that day without rewriting the database record. Valid active winners remain unchanged. Votes for withdrawn choices remain stored but cannot win a new ballot.
+
+The 72 active passages rotate in groups of three, producing a 24-day cycle. Adjacent days have disjoint choices. Quotes eventually repeat.
 
 ## The requested example
 
-The user's "vehicles and conduits of food, tombs of animals, hostels of Death" is a different English rendering. This collection starts with Richter's verifiable version, section **847**, beginning "Man and animals are really the passage and the conduit of food". It preserves the source's translator-supplied square brackets in "[bodies]". We do not attribute the user's exact wording to the Richter edition.
+The user's "vehicles and conduits of food, tombs of animals, hostels of Death" is a different English rendering. The collection retains Richter's verifiable version, section **847**, beginning "Man and animals are really the passage and the conduit of food". It preserves the source's translator-supplied square brackets in "[bodies]". We do not attribute the user's exact wording to the Richter edition.
 
-## Editorial choices
+## Editorial context
 
-The selection favors mortality, bodily processes, unsettling natural imagery, strange observations, and Leonardo's riddles. It avoids the familiar motivational quotations. "Uncommon" is an editorial judgment, not a measured popularity ranking. The finite collection will eventually repeat; the scheduling implementation should avoid immediate repeats and preferably recent selections.
+Some entries are excerpts from longer passages and may begin or end within a sentence. Nothing has been spliced together; no ellipses or punctuation have been inserted into the stored text. Readers can follow each source link for its full context.
 
-Some entries excerpt a complete sentence or paragraph from a longer passage. Nothing has been spliced together. Historical scientific ideas are presented as Leonardo's writing, not as current scientific facts. In section 1177, Richter explicitly notes that there is no clue explaining the sentence about words freezing on Mount Etna. Section 1217 concerns a fossilized sea creature and includes passages whose underlying manuscript Richter found difficult to decipher.
+Historical scientific ideas are presented as Leonardo's writing, not as current scientific facts. Section 9 uses an ironic comparison with unwanted merchandise to describe neglected subjects of study. In section 1177, Richter explicitly notes that there is no clue explaining the sentence about words freezing on Mount Etna. Section 1217 concerns a fossilized sea creature and includes passages whose underlying manuscript Richter found difficult to decipher. Section 1218 speculates on the end of terrestrial nature; it is outside the Prophecies sequence. Section 1339's cave passage describes fear and curiosity.
 
 ## Verification
 
-On retrieval, all **54/54** texts were found verbatim after whitespace normalization in the plain-text edition and in exactly one HTML paragraph. Every direct fragment link matches the ID of that paragraph. All **54/54** section numbers were checked against the nearest preceding numbered paragraph in the HTML edition. IDs and texts are unique. Quote lengths range from 51 to 270 characters, suitable for a readable image without tiny type.
+All **106/106** texts were found verbatim after whitespace normalization in the plain-text edition and in their linked HTML paragraphs. Every numbered section was checked against the nearest preceding numbered HTML paragraph. IDs and texts are unique. Active quote lengths range from 51 to 314 characters; every catalog entry is exercised by the image-rendering tests.
 
-The exact validation was performed with Python 3's standard-library `html.parser`, `json`, `re`, and `hashlib`. No typography substitutions, punctuation modernization, spelling corrections, or ellipsis insertions were made.
+Download the two source editions linked above, then run:
+
+```sh
+python3 scripts/verify-sources.py /path/pg5000.txt /path/pg5000-images.html
+npm test
+npm test --prefix website
+npm run build --prefix website
+```
+
+The source verifier uses only Python's standard library and prints the hashes of the exact downloaded files. The normal tests check catalog synchronization, IDs, retirement, rotation, saved-edition compatibility and rendering without requiring network access.

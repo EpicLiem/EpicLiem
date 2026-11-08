@@ -19,11 +19,18 @@ export function midnight(day) {
   return result / 1000;
 }
 export function candidates(day, quotes) {
+  quotes = quotes.filter(quote => !quote.retired);
   if (quotes.length < 6) throw new Error('At least six passages are required.');
   const n = Math.floor(Date.parse(`${day}T12:00:00Z`) / 86400000);
   // Adjacent days have disjoint groups, so a winner cannot repeat tomorrow.
   const start = ((n * 3) % quotes.length + quotes.length) % quotes.length;
   return [0, 1, 2].map(i => quotes[(start + i) % quotes.length]);
+}
+export function editionQuote(day, id, quotes) {
+  const quote = quotes.find(quote => quote.id === id);
+  if (!quote) throw new Error('Published passage missing.');
+  // Retain saved editions for provenance while withdrawing retired passages from display.
+  return quote.retired ? candidates(day, quotes)[0] : quote;
 }
 export function selectWinner(choices, counts) {
   return choices.reduce((best, quote) => (counts[quote.id] || 0) > (counts[best.id] || 0) ? quote : best);

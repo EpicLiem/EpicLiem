@@ -4,7 +4,7 @@ The GitHub profile README contains only the quote image, linked to https://profi
 
 ## Local work
 
-- Root: `npm ci && npm test` validates all 54 image renders and pixel-identical lossless WebP encoding.
+- Root: `npm ci && npm test` validates all catalog image renders and pixel-identical lossless WebP encoding.
 - Website: `npm ci --prefix website`, then copy `website/.env.example` to `website/.env.local` and supply DATABASE_URL and a random VOTER_SECRET (at least 32 characters).
 - `cd website && npm run db:migrate` creates only the two named Leonardo tables and their index, idempotently.
 - `npm run dev --prefix website` serves port 3127.
@@ -14,9 +14,9 @@ The GitHub profile README contains only the quote image, linked to https://profi
 
 ## Selection
 
-Every day offers three passages, cycling through the 54-entry collection in groups. Adjacent days are disjoint; passages recur after 18 days. Votes select within each group; the first listed quote wins ties and days without votes. October 29, 2026 starts with the requested section 847 passage.
+Every day offers three passages, cycling through the 72 active passages in groups. Adjacent days are disjoint; passages recur after 24 days. Votes select within each group; the first listed quote wins ties and days without votes. October 29, 2026 starts with the requested section 847 passage.
 
-The day boundary is midnight in America/New_York, including DST. Votes and settlement share a PostgreSQL transaction advisory lock per target day. The SQL write checks the deadline after acquiring that lock. A day's winner is inserted once and remains fixed. The first request after midnight settles the result; the hourly GitHub workflow normally makes that request at 00:07.
+The day boundary is midnight in America/New_York, including DST. Votes and settlement share a PostgreSQL transaction advisory lock per target day. The SQL write checks the deadline after acquiring that lock. A day's winner is inserted once. Retiring a passage preserves that saved record but displays the first eligible candidate for that day instead; active published winners remain fixed. The first request after midnight settles the result; the hourly GitHub workflow normally makes that request at 00:07.
 
 Voting uses a signed, HttpOnly, SameSite=Lax browser cookie. A vote can be replaced by that browser, not accumulated. Ten browsers per network per target day are allowed, using a date-scoped HMAC of Vercel's trusted IP header. The raw address is not stored. This deters casual flooding; it is not identity verification, and shared networks may hit the cap. Only aggregate counts are public.
 
@@ -30,7 +30,9 @@ Run manually with `gh workflow run daily-quote.yml -R EpicLiem/EpicLiem`. The de
 
 `data/quotes.json` is the profile validator's collection; `website/lib/quotes.json` must stay identical. See `data/SOURCES.md` for primary-source anchors and translation details. The quoted text is historical, not a claim of modern scientific accuracy. Font license lives in `assets/terminess-LICENSE.txt` and website/public/fonts.
 
-To add passages, update both collections and test rotation; the corpus length must be a multiple of three to retain the stated 18-day group behavior (cycle length changes with collection size). Existing persisted editions refer to stable IDs: don't remove published IDs.
+To add passages, update both collections and test rotation; the active corpus length must be a multiple of three to retain disjoint three-passage groups (cycle length changes with collection size). To withdraw a passage, set `retired: true` in both catalogs. Existing persisted editions refer to stable IDs: don't remove or rewrite published entries. Retired passages stay available for provenance and source validation, but never enter ballots. A saved edition referencing a retired passage displays the first active candidate for its day, without changing the saved record. Votes for choices withdrawn by a catalog change remain stored but are excluded from winner selection, and the browser can choose again.
+
+Verify every text, numbered section and paragraph anchor with `python3 scripts/verify-sources.py /path/pg5000.txt /path/pg5000-images.html` after downloading the Gutenberg files listed in `data/SOURCES.md`.
 
 ## Vector README artwork
 

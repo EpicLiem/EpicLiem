@@ -1,6 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 import quotes from './quotes.json';
-import { candidates, dayAt, nextDay, midnight } from './calendar.mjs';
+import { candidates, dayAt, nextDay, midnight, editionQuote } from './calendar.mjs';
 export { quotes, candidates, dayAt, nextDay, midnight };
 export function db() {
   if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is required.');
@@ -27,8 +27,7 @@ export async function today() {
     ]);
     [edition] = await sql`SELECT quote_id FROM leonardo_editions WHERE day = ${day}`;
   }
-  const quote = quotes.find(q => q.id === edition.quote_id);
-  if (!quote) throw new Error('Published passage missing.');
+  const quote = editionQuote(day, edition.quote_id, quotes);
   return {day, timeZone:'America/New_York', quote};
 }
 export async function ballot(voter?: string) {
@@ -37,7 +36,9 @@ export async function ballot(voter?: string) {
     bool_or(voter = ${voter ?? ''}) AS selected
     FROM leonardo_votes WHERE day = ${day} GROUP BY quote_id`;
   const counts = Object.fromEntries(rows.map(row => [row.quote_id, Number(row.total)]));
-  return {day, closesAt:midnight(day) * 1000, choices:candidates(day, quotes), counts, selected:rows.find(row => row.selected)?.quote_id ?? null};
+  const choices = candidates(day, quotes);
+  const selected = rows.find(row => row.selected && choices.some(quote => quote.id === row.quote_id))?.quote_id ?? null;
+  return {day, closesAt:midnight(day) * 1000, choices, counts, selected};
 }
 export async function castVote(day: string, voter: string, quoteId: string, network: string) {
   if (day !== nextDay(dayAt()) || !candidates(day, quotes).some(q => q.id === quoteId)) return 'closed';
