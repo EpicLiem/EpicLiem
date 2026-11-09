@@ -10,6 +10,7 @@ The GitHub profile README contains only the quote image, linked to https://profi
 - `npm run dev --prefix website` serves port 3127.
 - `npm test --prefix website` checks New York date/DST boundaries, candidate rotation, and ties.
 - `npm run build --prefix website` runs a production build and TypeScript checks.
+- For isolated UI regression tests, build the website, then start it without database credentials on port 3129: `cd website && node node_modules/next/dist/bin/next start --port 3129`. From the repo root run `node tests/reader-ui.mjs`. API responses and vote writes are mocked; the checks cover selection, persistence, failures, independent loading, midnight rollover, keyboard navigation, and seven viewport widths. Screenshots go to ignored `outputs/qa/ui/`. `TEST_ORIGIN` overrides the test server URL.
 - `node tests/browser.mjs` tests the running local server with Chrome. It writes test-voter IDs and screenshots to ignored `outputs/qa/`; use a test database or remove only those test rows afterward.
 
 ## Selection
