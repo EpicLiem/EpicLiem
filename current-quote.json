@@ -1,11 +1,11 @@
 {
-  "day": "2026-11-21",
+  "day": "2026-11-22",
   "timeZone": "America/New_York",
   "quote": {
-    "id": "star-shaped-sunlight",
-    "text": "If you transmit the rays of the sun through a hole in the shape of a star you will see a beautiful effect of perspective in the spot where the sun's rays fall.",
-    "section": "213",
+    "id": "colour-in-a-shadow",
+    "text": "A shadow is always affected by the colour of the surface on which it is cast.",
+    "section": "265",
     "topic": "Light and shadow",
-    "source": "https://www.gutenberg.org/cache/epub/5000/pg5000-images.html#id00856"
+    "source": "https://www.gutenberg.org/cache/epub/5000/pg5000-images.html#id01041"
   }
 }
