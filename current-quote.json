@@ -1,11 +1,11 @@
 {
-  "day": "2026-11-22",
+  "day": "2026-11-23",
   "timeZone": "America/New_York",
   "quote": {
-    "id": "colour-in-a-shadow",
-    "text": "A shadow is always affected by the colour of the surface on which it is cast.",
-    "section": "265",
-    "topic": "Light and shadow",
-    "source": "https://www.gutenberg.org/cache/epub/5000/pg5000-images.html#id01041"
+    "id": "transparent-meadows",
+    "text": "If the sun is in the East the verdure of the meadows and of other small plants is of a most beautiful green from being transparent to the sun; this does not occur in the meadows to the West, and in those to the South and North the grass is of a moderately brilliant green.",
+    "section": "444",
+    "topic": "Nature",
+    "source": "https://www.gutenberg.org/cache/epub/5000/pg5000-images.html#id01757"
   }
 }
